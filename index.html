@@ -45,10 +45,10 @@
 			//有幾個項目就呼叫幾個 addChild
 			//addChild 要比 renderModal 先呼叫
 			so.addChild("視角可以移動及放大", 2, true);
-			so.addChild("在畫面上畫出左眼的邊框", 2, false);
-			so.addChild("複製左眼邊框變化到右眼", 2, false);
+			so.addChild("在畫面上畫出左眼的邊框", 2, true);
+			so.addChild("複製左眼邊框變化到右眼", 2, true);
 			so.addChild("可選擇當前讀取角色或按鍵選擇上 / 下一隻角色", 1, true);
-			so.addChild("可儲存座標點檔案", 1, false);
+			so.addChild("可儲存座標點檔案", 1, true);
 			so.addChild("回答問題", 2, true);
 
 			//產生自評表，參數如下所示
@@ -277,13 +277,36 @@
 						v.z - posit.z;
 						drawline2(v,"#3498DB","右眼右");
 					}
+					
 
 
 
 
 				}
-				
-
+				else if(event.key === "s"){
+						if(scene.getObjectByName("左眼右") != null && scene.getObjectByName("左眼左") != null && scene.getObjectByName("左眼上") != null && scene.getObjectByName("左眼下") != null && scene.getObjectByName("右眼右") != null&& scene.getObjectByName("右眼左") != null&& scene.getObjectByName("右眼上") != null && scene.getObjectByName("右眼下") != null){
+							const linename = [
+				"左眼下",
+				"左眼上",
+				"左眼左",
+				"左眼右",
+				"右眼下",
+				"右眼上",
+				"右眼左",
+				"右眼右"
+			];
+			var jsonobj = {"eyes":{}};
+			for(var i=0;i<linename.length;i++){
+				var name = linename[i];
+				var pos = scene.getObjectByName(linename[i]).position;
+				jsonobj.eyes[name] = pos;
+			};
+			var json = JSON.stringify(jsonobj);
+			
+			var file = new Blob([json],{type:"text/plain;charset=utf-8"});
+			window.navigator.msSaveBlob(file, "Eyes_position.json");
+						}
+						}
 
 			}
 			window.addEventListener('keypress', changemodel)
@@ -425,7 +448,7 @@
 		function onmousemove() {
 			
 
-
+			
 
 			const mouse = new THREE.Vector3();
 			
@@ -436,14 +459,7 @@
 (camera.near + camera.far) / (camera.near - camera.far),
 			);
 			mouse.unproject(camera);
-			var raycaster = new THREE.Raycaster();
-			raycaster.setFromCamera(mouse, camera);
-			var intersects = raycaster.intersectObjects(scene.children);
-			for ( let i = 0; i < intersects.length; i ++ ) {
-
-		intersects[ i ].object.material.color.set( 0xff0000 );
-
-	}
+			
 			
 			/*
 			var raycaster = new THREE.Raycaster();
@@ -476,6 +492,23 @@
 			else if(scene.getObjectByName("左眼右")==null){
 				drawline2(mouse,"#00ff00","左眼右");
 			}
+			else if(scene.getObjectByName("左眼下") != null && mouse.x > 0.45 && mouse.x < 0.51 && mouse.y >8.0 && mouse.y < 8.1 ){
+				var eye = scene.getObjectByName("左眼下");
+				scene.remove(eye);
+			}
+			else if(scene.getObjectByName("左眼上") != null && mouse.x > 0.45 && mouse.x < 0.51 && mouse.y>8.4 && mouse.y < 8.5 ){
+				var eye = scene.getObjectByName("左眼上");
+				scene.remove(eye);
+			}
+			else if(scene.getObjectByName("左眼左") != null && mouse.x > 0.25 && mouse.x < 0.3 && mouse.y>8.2 && mouse.y < 8.3  ){
+				var eye = scene.getObjectByName("左眼左");
+				scene.remove(eye);
+			}
+			else if(scene.getObjectByName("左眼右") != null && mouse.x > 0.71 && mouse	.x < 0.72 && mouse.y>8.2 && mouse.y < 8.3 ){
+				var eye = scene.getObjectByName("左眼右");
+				scene.remove(eye);
+			}
+
 			
 		}
 		
@@ -529,7 +562,7 @@
 			scene.add(line);
 		}
 
-
+		
 
 
 		function onWindowResize() {

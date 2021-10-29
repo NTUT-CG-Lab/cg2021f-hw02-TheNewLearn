@@ -304,7 +304,17 @@
 			var json = JSON.stringify(jsonobj);
 			
 			var file = new Blob([json],{type:"text/plain;charset=utf-8"});
-			window.navigator.msSaveBlob(file, "Eyes_position.json");
+			if (navigator.msSaveBlob) { 
+  navigator.msSaveBlob(file,"Eyes_position.json");
+ } else {
+  
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(file);
+  link.setAttribute('download', "Eyes_position.json");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+ }
 						}
 						}
 
